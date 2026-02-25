@@ -1,0 +1,7 @@
+# Don't send these to the Docker build context
+target/
+frontend/
+.git/
+.gitignore
+*.md
+.mvn/
