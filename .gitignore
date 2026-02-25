@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Sensitive config — never commit credentials ###
+src/main/resources/application.properties
+src/main/resources/application-*.properties
+.env
+.env.*

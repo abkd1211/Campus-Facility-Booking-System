@@ -1,26 +1,24 @@
 spring.application.name=campus_facilities_booking
 
 # ── PostgreSQL ────────────────────────────────────────────────
+# Local dev example:
 # spring.datasource.url=jdbc:postgresql://localhost:5432/ug_facility_booking
 # spring.datasource.username=postgres
-# spring.datasource.password=Admin
+# spring.datasource.password=yourpassword
 # spring.datasource.driver-class-name=org.postgresql.Driver
 
-# Aiven Connection
-spring.datasource.url=jdbc:postgresql://pg-2948135e-asare7890-61a2.h.aivencloud.com:18175/defaultdb?sslmode=require
-spring.datasource.username=avnadmin
-spring.datasource.password=AVNS_vEROX6Aw1V9Kmzh5ymU
+# Aiven (cloud) example:
+spring.datasource.url=jdbc:postgresql://<host>:<port>/defaultdb?sslmode=require
+spring.datasource.username=<your-aiven-username>
+spring.datasource.password=<your-aiven-password>
 
 # ── JPA / Hibernate ──────────────────────────────────────────
-# validate = check schema matches entities (use after schema.sql is run)
-# update  = let Hibernate tweak schema automatically (handy during dev)
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.format_sql=true
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
 
 # ── Initialise DB with schema.sql on startup ─────────────────
-# Set to 'always' only when you want to re-run schema.sql
 spring.sql.init.mode=never
 
 # ── Server ────────────────────────────────────────────────────
@@ -37,7 +35,7 @@ springdoc.swagger-ui.path=/swagger-ui.html
 springdoc.swagger-ui.operationsSorter=method
 
 # ── JWT (used in security config) ────────────────────────────
-app.jwt.secret=ugLegonFacilityBookingSecretKey2024!ChangeInProduction
+app.jwt.secret=<your-strong-jwt-secret-at-least-32-chars>
 app.jwt.expiration-ms=86400000
 
 # ── Logging ──────────────────────────────────────────────────
