@@ -34,7 +34,6 @@ export default function BookingFormPage({ params }: { params: Promise<{ id: stri
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [submitted, setSubmitted] = useState(false);
-    const [resultStatus, setResultStatus] = useState<"CONFIRMED" | "PENDING">("CONFIRMED");
 
     const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
     const [startSlot, setStartSlot] = useState<string | null>(null);
@@ -86,7 +85,6 @@ export default function BookingFormPage({ params }: { params: Promise<{ id: stri
                 attendees,
                 notes: notes || undefined,
             });
-            setResultStatus(booking.status === "PENDING" ? "PENDING" : "CONFIRMED");
             setSubmitted(true);
         } catch (err: unknown) {
             setError(err instanceof Error ? err.message : "Booking failed. Please try again.");
@@ -124,17 +122,12 @@ export default function BookingFormPage({ params }: { params: Promise<{ id: stri
                     >
                         <CheckCircle size={36} className="text-white" />
                     </motion.div>
-                    <h2 className="text-2xl font-bold text-white mb-2">Booking Submitted</h2>
+                    <h2 className="text-2xl font-bold text-white mb-2">Booking Confirmed!</h2>
                     <p className="text-sm text-white/60 mb-4">
-                        {resultStatus === "PENDING"
-                            ? "Your request is pending admin approval. You will be notified once reviewed."
-                            : `Your booking for ${facility.name} on ${date} at ${startSlot} is confirmed.`}
+                        {`Your booking for ${facility.name} on ${date} at ${startSlot} is confirmed.`}
                     </p>
-                    <span className={clsx(
-                        "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold",
-                        resultStatus === "PENDING" ? "badge-pending" : "badge-confirmed"
-                    )}>
-                        {resultStatus === "PENDING" ? "PENDING APPROVAL" : "CONFIRMED"}
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold badge-confirmed">
+                        CONFIRMED
                     </span>
                     <div className="flex gap-3 mt-8">
                         <Link href="/dashboard/bookings" className="flex-1">
@@ -279,7 +272,7 @@ export default function BookingFormPage({ params }: { params: Promise<{ id: stri
                                     { label: "Time", value: `${startSlot} – ${endSlot}` },
                                     { label: "Attendees", value: `${attendees} people` },
                                     { label: "Purpose", value: purpose },
-                                    { label: "Status", value: facility.facilityType?.requiresApproval ? "Will be PENDING" : "Auto CONFIRMED" },
+                                    { label: "Status", value: "Instant Confirm" },
                                 ].map(({ label, value }) => (
                                     <div key={label} className="flex justify-between items-start gap-4 py-3 border-b border-white/[0.05] last:border-0">
                                         <span className="text-xs text-white/40 font-medium w-24 shrink-0">{label}</span>
@@ -331,7 +324,7 @@ export default function BookingFormPage({ params }: { params: Promise<{ id: stri
                                 { k: "Date", v: date },
                                 { k: "Time", v: startSlot && endSlot ? `${startSlot} – ${endSlot}` : "—" },
                                 { k: "Attendees", v: String(attendees) },
-                                { k: "Approval", v: facility.facilityType?.requiresApproval ? "Required" : "Auto", color: facility.facilityType?.requiresApproval ? "text-amber-400" : "text-emerald-400" },
+                                { k: "Status", v: "Instant Confirm", color: "text-emerald-400" },
                             ].map(({ k, v, color }) => (
                                 <div key={k} className="flex justify-between text-xs">
                                     <span className="text-white/40">{k}</span>

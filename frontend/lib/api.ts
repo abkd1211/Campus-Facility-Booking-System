@@ -226,6 +226,31 @@ export const facilities = {
             `/facilities/${facilityId}/availability?date=${date}`
         ),
 
+    create: (body: {
+        name: string;
+        location: string;
+        capacity: number;
+        facilityType: { id: number };
+        hasProjector: boolean;
+        hasAirConditioning: boolean;
+        hasWhiteboard: boolean;
+        hasPaSystem: boolean;
+        hasVideoConferencing: boolean;
+        hasWifi: boolean;
+        isOutdoor: boolean;
+        isWheelchairAccessible: boolean;
+        openingTime: string;
+        closingTime: string;
+        isAvailable: boolean;
+        imageUrl?: string;
+        rules?: string;
+        description?: string;
+    }) =>
+        apiFetch<Facility>("/facilities", {
+            method: "POST",
+            body: JSON.stringify(body),
+        }),
+
     toggleAvailability: (id: number) =>
         apiFetch<Facility>(`/facilities/${id}/toggle-availability`, { method: "PATCH" }),
 

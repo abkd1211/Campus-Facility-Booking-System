@@ -46,7 +46,7 @@ export default function AdminCreateBookingPage() {
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [submitted, setSubmitted] = useState(false);
-    const [bookingStatus, setBookingStatus] = useState<string>("PENDING");
+    const [bookingStatus, setBookingStatus] = useState<string>("CONFIRMED");
 
     // Load facilities + users
     useEffect(() => {
@@ -125,10 +125,7 @@ export default function AdminCreateBookingPage() {
                     Booking for <span className="font-medium text-white">{selectedUser?.name}</span> at{" "}
                     <span className="font-medium text-white">{selectedFacility?.name}</span> on {date} has been created.
                 </p>
-                <span className={clsx(
-                    "inline-flex px-3 py-1.5 rounded-full text-xs font-semibold mt-1",
-                    bookingStatus === "PENDING" ? "badge-pending" : "badge-confirmed"
-                )}>
+                <span className="inline-flex px-3 py-1.5 rounded-full text-xs font-semibold mt-1 badge-confirmed">
                     {bookingStatus}
                 </span>
                 <div className="flex gap-3 mt-8">
@@ -355,12 +352,6 @@ export default function AdminCreateBookingPage() {
                                 <div className="flex justify-between text-xs">
                                     <span className="text-white/40 flex items-center gap-1"><Clock size={10} /> Time</span>
                                     <span className="text-white/80 font-medium">{date}, {startSlot}–{endSlot}</span>
-                                </div>
-                            )}
-                            {selectedFacility?.facilityType?.requiresApproval && (
-                                <div className="flex justify-between text-xs">
-                                    <span className="text-white/40">Approval</span>
-                                    <span className="text-amber-400 font-medium">Required → PENDING</span>
                                 </div>
                             )}
                         </div>

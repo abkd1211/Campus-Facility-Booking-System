@@ -1,18 +1,17 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { Home, CalendarDays, Bell, User, LogOut, Menu, X, Waves, PlusCircle } from "lucide-react";
+import { Home, CalendarDays, User, LogOut, Menu, X, Waves, PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import clsx from "clsx";
 import { useAuth } from "@/lib/auth";
-import { notifications as notifApi } from "@/lib/api";
+import NotificationBell from "@/components/NotificationBell";
 
 const NAV = [
     { href: "/dashboard", icon: Home, label: "Home" },
     { href: "/dashboard/bookings", icon: CalendarDays, label: "My Bookings" },
-    { href: "/dashboard/notifications", icon: Bell, label: "Notifications" },
     { href: "/dashboard/profile", icon: User, label: "Profile" },
 ];
 
@@ -20,15 +19,6 @@ export default function Sidebar() {
     const pathname = usePathname();
     const [open, setOpen] = useState(false);
     const { user, logout } = useAuth();
-    const [unread, setUnread] = useState(0);
-
-    useEffect(() => {
-        notifApi.unread().then((r) => setUnread(r.count)).catch(() => { });
-        const id = setInterval(() => {
-            notifApi.unread().then((r) => setUnread(r.count)).catch(() => { });
-        }, 30_000);
-        return () => clearInterval(id);
-    }, []);
 
     const initials = user?.name
         ? user.name.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase()
@@ -70,9 +60,12 @@ export default function Sidebar() {
                             <p className="text-[10px] text-white/35">Legon Campus</p>
                         </div>
                     </div>
-                    <button className="lg:hidden glass rounded-lg p-1.5" onClick={() => setOpen(false)}>
-                        <X size={16} className="text-white/50" />
-                    </button>
+                    <div className="flex items-center gap-1">
+                        <NotificationBell accent="teal" />
+                        <button className="lg:hidden glass rounded-lg p-1.5" onClick={() => setOpen(false)}>
+                            <X size={16} className="text-white/50" />
+                        </button>
+                    </div>
                 </div>
 
                 <nav className="flex-1 space-y-0.5">
@@ -94,7 +87,6 @@ export default function Sidebar() {
 
                     {NAV.map(({ href, icon: Icon, label }) => {
                         const active = pathname === href || (href !== "/dashboard" && pathname.startsWith(href));
-                        const badge = label === "Notifications" && unread > 0 ? unread : 0;
                         return (
                             <Link key={href} href={href} onClick={() => setOpen(false)}>
                                 <span className={clsx(
@@ -103,11 +95,6 @@ export default function Sidebar() {
                                 )}>
                                     <Icon size={17} />
                                     <span className="flex-1">{label}</span>
-                                    {badge > 0 && (
-                                        <span className="text-[10px] bg-teal-400/20 text-teal-300 border border-teal-400/30 rounded-full px-1.5 py-0.5 font-bold leading-none">
-                                            {badge}
-                                        </span>
-                                    )}
                                 </span>
                             </Link>
                         );

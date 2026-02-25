@@ -9,7 +9,7 @@ import { bookings as bookingApi } from "@/lib/api";
 import type { Booking } from "@/lib/api";
 import clsx from "clsx";
 
-const STATUS_FILTER = ["ALL", "CONFIRMED", "PENDING", "COMPLETED", "CANCELLED", "REJECTED", "EXPIRED"] as const;
+const STATUS_FILTER = ["ALL", "CONFIRMED", "COMPLETED", "CANCELLED", "REJECTED", "EXPIRED"] as const;
 
 const PLACEHOLDER: Record<string, string> = {
     "Lecture Hall": "https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?w=800&q=80",
@@ -24,7 +24,6 @@ const PLACEHOLDER: Record<string, string> = {
 function statusClass(s: string) {
     switch (s) {
         case "CONFIRMED": return "badge-confirmed";
-        case "PENDING": return "badge-pending";
         case "COMPLETED": return "badge-completed";
         case "CANCELLED": return "badge-cancelled";
         case "REJECTED": return "badge-cancelled";
@@ -67,8 +66,8 @@ export default function MyBookingsPage() {
     const stats = [
         { label: "Total", count: bookings.length, color: "text-white/70" },
         { label: "Confirmed", count: bookings.filter((b) => b.status === "CONFIRMED").length, color: "text-teal-400" },
-        { label: "Pending", count: bookings.filter((b) => b.status === "PENDING").length, color: "text-amber-400" },
         { label: "Completed", count: bookings.filter((b) => b.status === "COMPLETED").length, color: "text-emerald-400" },
+        { label: "Cancelled", count: bookings.filter((b) => b.status === "CANCELLED").length, color: "text-red-400" },
     ];
 
     return (
@@ -129,7 +128,7 @@ export default function MyBookingsPage() {
                         {filtered.map((booking, i) => {
                             const typeName = booking.facility?.facilityType?.name ?? "";
                             const imgSrc = booking.facility?.imageUrl || PLACEHOLDER[typeName] || PLACEHOLDER.default;
-                            const canCancel = ["PENDING", "CONFIRMED"].includes(booking.status);
+                            const canCancel = booking.status === "CONFIRMED";
                             const isCompleted = booking.status === "COMPLETED";
 
                             return (

@@ -72,12 +72,6 @@ export default function FacilityCard({ facility, index = 0 }: Props) {
                     {typeName}
                 </div>
 
-                {/* Requires approval ribbon */}
-                {facilityType?.requiresApproval && (
-                    <div className="absolute bottom-3 right-3 glass px-2 py-1 rounded-lg text-[10px] font-medium text-amber-300 border border-amber-400/25">
-                        Needs Approval
-                    </div>
-                )}
             </div>
 
             {/* Body */}

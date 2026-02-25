@@ -2,19 +2,20 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import {
-    CheckSquare, LayoutDashboard, CalendarDays, Building2,
-    Users, LogOut, Menu, X, ShieldCheck, PlusCircle,
+    LayoutDashboard, CalendarDays, Building2,
+    Users, LogOut, Menu, X, ShieldCheck, PlusCircle, BarChart2,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import clsx from "clsx";
 import { useAuth } from "@/lib/auth";
-import { approvals as approvalApi } from "@/lib/api";
+
+import NotificationBell from "@/components/NotificationBell";
 
 const ADMIN_NAV = [
     { href: "/admin", icon: LayoutDashboard, label: "Overview" },
-    { href: "/admin/approvals", icon: CheckSquare, label: "Approvals" },
+    { href: "/admin/analytics", icon: BarChart2, label: "Analytics" },
     { href: "/admin/bookings", icon: CalendarDays, label: "All Bookings" },
     { href: "/admin/facilities", icon: Building2, label: "Facilities" },
     { href: "/admin/users", icon: Users, label: "Users" },
@@ -24,15 +25,7 @@ export default function AdminSidebar() {
     const pathname = usePathname();
     const [open, setOpen] = useState(false);
     const { user, logout } = useAuth();
-    const [pendingCount, setPendingCount] = useState(0);
 
-    useEffect(() => {
-        approvalApi.pending().then((list) => setPendingCount(list.length)).catch(() => { });
-        const id = setInterval(() => {
-            approvalApi.pending().then((list) => setPendingCount(list.length)).catch(() => { });
-        }, 60_000);
-        return () => clearInterval(id);
-    }, []);
 
     const initials = user?.name
         ? user.name.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase()
@@ -70,9 +63,12 @@ export default function AdminSidebar() {
                             <p className="text-[10px] text-white/30">UG Facility System</p>
                         </div>
                     </div>
-                    <button className="lg:hidden glass rounded-lg p-1.5" onClick={() => setOpen(false)}>
-                        <X size={16} className="text-white/40" />
-                    </button>
+                    <div className="flex items-center gap-1">
+                        <NotificationBell accent="amber" />
+                        <button className="lg:hidden glass rounded-lg p-1.5" onClick={() => setOpen(false)}>
+                            <X size={16} className="text-white/40" />
+                        </button>
+                    </div>
                 </div>
 
                 <nav className="flex-1 space-y-0.5">
@@ -94,7 +90,6 @@ export default function AdminSidebar() {
 
                     {ADMIN_NAV.map(({ href, icon: Icon, label }) => {
                         const active = href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
-                        const badge = label === "Approvals" && pendingCount > 0 ? pendingCount : 0;
                         return (
                             <Link key={href} href={href} onClick={() => setOpen(false)}>
                                 <span className={clsx(
@@ -103,11 +98,6 @@ export default function AdminSidebar() {
                                 )}>
                                     <Icon size={17} />
                                     <span className="flex-1">{label}</span>
-                                    {badge > 0 && (
-                                        <span className="text-[10px] bg-amber-400/15 text-amber-300 border border-amber-400/25 rounded-full px-1.5 py-0.5 font-bold leading-none animate-pulse">
-                                            {badge}
-                                        </span>
-                                    )}
                                 </span>
                             </Link>
                         );

@@ -77,8 +77,6 @@ export default function FacilityDetailPage({ params }: { params: Promise<{ id: s
         { icon: Accessibility, label: "Wheelchair", active: facility.isWheelchairAccessible },
     ];
 
-    const requiresApproval = facility.facilityType?.requiresApproval;
-
     return (
         <div className="min-h-screen p-6 lg:p-8">
             <motion.div initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} className="mb-6">
@@ -232,12 +230,6 @@ export default function FacilityDetailPage({ params }: { params: Promise<{ id: s
                         {!facility.isAvailable && (
                             <div className="mb-4 p-3 rounded-xl bg-red-500/[0.08] border border-red-500/20">
                                 <p className="text-xs text-red-400">This facility is currently showing as fully booked. You can still submit a booking request — choose an available time slot on the next step.</p>
-                            </div>
-                        )}
-
-                        {requiresApproval && (
-                            <div className="mb-4 p-3 rounded-xl bg-amber-500/[0.08] border border-amber-500/20">
-                                <p className="text-xs text-amber-400">This venue requires admin approval. Your booking will be set to PENDING until reviewed.</p>
                             </div>
                         )}
 

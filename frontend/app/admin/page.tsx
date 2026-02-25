@@ -1,10 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { CheckSquare, CalendarDays, Building2, Users, TrendingUp, RefreshCw } from "lucide-react";
+import { CalendarDays, Building2, Users, TrendingUp, RefreshCw } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { approvals as approvalApi, bookings as bookingApi, facilities as facilityApi, users as usersApi } from "@/lib/api";
+import { bookings as bookingApi, facilities as facilityApi, users as usersApi } from "@/lib/api";
 import type { Booking } from "@/lib/api";
 import clsx from "clsx";
 
@@ -16,22 +16,26 @@ const ROLE_BADGE: Record<string, string> = {
 };
 
 export default function AdminOverview() {
-    const [pending, setPending] = useState<Booking[]>([]);
+    const [recentBookings, setRecentBookings] = useState<Booking[]>([]);
     const [bookingCount, setBookingCount] = useState("—");
     const [facCount, setFacCount] = useState("—");
     const [userCount, setUserCount] = useState("—");
+    const [confirmedCount, setConfirmedCount] = useState("—");
     const [loading, setLoading] = useState(true);
 
     const load = async () => {
         setLoading(true);
-        const [pend, allBookings, allFac, allUsers] = await Promise.allSettled([
-            approvalApi.pending(),
+        const [allBookings, allFac, allUsers] = await Promise.allSettled([
             bookingApi.all(),
             facilityApi.list(),
             usersApi.list(),
         ]);
-        if (pend.status === "fulfilled") setPending(pend.value);
-        if (allBookings.status === "fulfilled") setBookingCount(String(allBookings.value.length));
+        if (allBookings.status === "fulfilled") {
+            const bookings = allBookings.value;
+            setBookingCount(String(bookings.length));
+            setConfirmedCount(String(bookings.filter((b) => b.status === "CONFIRMED").length));
+            setRecentBookings(bookings.slice(0, 5));
+        }
         if (allFac.status === "fulfilled") setFacCount(String(allFac.value.length));
         if (allUsers.status === "fulfilled") setUserCount(String(allUsers.value.length));
         setLoading(false);
@@ -40,7 +44,7 @@ export default function AdminOverview() {
     useEffect(() => { load(); }, []);
 
     const stats = [
-        { label: "Pending Approvals", value: loading ? "…" : String(pending.length), icon: CheckSquare, color: "text-amber-400", bg: "bg-amber-400/10", border: "border-amber-400/20", href: "/admin/approvals" },
+        { label: "Confirmed Bookings", value: loading ? "…" : confirmedCount, icon: CalendarDays, color: "text-emerald-400", bg: "bg-emerald-400/10", border: "border-emerald-400/20", href: "/admin/bookings" },
         { label: "Total Bookings", value: bookingCount, icon: CalendarDays, color: "text-teal-400", bg: "bg-teal-400/10", border: "border-teal-400/20", href: "/admin/bookings" },
         { label: "Active Facilities", value: facCount, icon: Building2, color: "text-cyan-400", bg: "bg-cyan-400/10", border: "border-cyan-400/20", href: "/admin/facilities" },
         { label: "Registered Users", value: userCount, icon: Users, color: "text-purple-400", bg: "bg-purple-400/10", border: "border-purple-400/20", href: "/admin/users" },
@@ -79,23 +83,23 @@ export default function AdminOverview() {
             </motion.div>
 
             <div className="grid lg:grid-cols-3 gap-6">
-                {/* Pending approvals quick-view */}
+                {/* Recent bookings quick-view */}
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="lg:col-span-2">
                     <div className="glass-card rounded-2xl overflow-hidden">
                         <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.05]">
                             <h2 className="text-sm font-bold text-white flex items-center gap-2">
-                                <CheckSquare size={16} className="text-amber-400" /> Pending Approvals
+                                <CalendarDays size={16} className="text-teal-400" /> Recent Bookings
                             </h2>
-                            <Link href="/admin/approvals">
-                                <span className="text-xs text-amber-400 hover:text-amber-300 transition-colors font-medium">View all</span>
+                            <Link href="/admin/bookings">
+                                <span className="text-xs text-teal-400 hover:text-teal-300 transition-colors font-medium">View all</span>
                             </Link>
                         </div>
                         <div className="divide-y divide-white/[0.04]">
-                            {pending.length === 0 ? (
+                            {recentBookings.length === 0 ? (
                                 <div className="px-6 py-8 text-center text-white/30 text-sm">
-                                    {loading ? "Loading..." : "No pending approvals"}
+                                    {loading ? "Loading..." : "No bookings yet"}
                                 </div>
-                            ) : pending.slice(0, 5).map((b) => (
+                            ) : recentBookings.map((b) => (
                                 <div key={b.id} className="flex items-center justify-between gap-4 px-6 py-4 hover:bg-white/[0.02] transition-colors">
                                     <div className="min-w-0">
                                         <p className="text-sm font-semibold text-white/90 truncate">{b.facility?.name}</p>
@@ -108,7 +112,10 @@ export default function AdminOverview() {
                                             "text-[10px] px-2 py-1 rounded-full border font-semibold",
                                             ROLE_BADGE[b.user?.role ?? ""] ?? ROLE_BADGE.STUDENT
                                         )}>{b.user?.role}</span>
-                                        <span className="badge-pending text-[10px] px-2 py-1 rounded-full font-semibold">PENDING</span>
+                                        <span className={clsx(
+                                            "text-[10px] px-2 py-1 rounded-full font-semibold",
+                                            b.status === "CONFIRMED" ? "badge-confirmed" : "badge-cancelled"
+                                        )}>{b.status}</span>
                                     </div>
                                 </div>
                             ))}
@@ -125,7 +132,6 @@ export default function AdminOverview() {
                         </div>
                         <div className="p-4 space-y-2">
                             {[
-                                { href: "/admin/approvals", label: "Review pending bookings", icon: CheckSquare, color: "text-amber-400" },
                                 { href: "/admin/bookings", label: "Browse all bookings", icon: CalendarDays, color: "text-teal-400" },
                                 { href: "/admin/facilities", label: "Manage facilities", icon: Building2, color: "text-cyan-400" },
                                 { href: "/admin/users", label: "Manage users", icon: Users, color: "text-purple-400" },

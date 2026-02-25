@@ -6,7 +6,6 @@ import com.groupwork.campus_facilities_booking.model.Entities.User;
 import com.groupwork.campus_facilities_booking.model.Entities.WaitlistEntry;
 import com.groupwork.campus_facilities_booking.model.Enums.BookingStatus;
 import com.groupwork.campus_facilities_booking.model.Enums.NotificationType;
-import com.groupwork.campus_facilities_booking.model.Enums.UserRole;
 import com.groupwork.campus_facilities_booking.model.Enums.WaitlistStatus;
 import com.groupwork.campus_facilities_booking.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -73,10 +72,10 @@ public class BookingService {
         Facility facility = facilityRepository.findById(facilityId)
                 .orElseThrow(() -> new RuntimeException("Facility not found with id: " + facilityId));
 
-        // Get all confirmed/pending bookings for this facility on this date
+        // Get all confirmed bookings for this facility on this date
         List<Booking> existingBookings = bookingRepository
                 .findByFacilityAndDateAndStatusIn(facility, date,
-                        List.of(BookingStatus.CONFIRMED, BookingStatus.PENDING));
+                        List.of(BookingStatus.CONFIRMED));
 
         // Build 30-minute slots between opening and closing time
         List<Map<String, Object>> slots = new ArrayList<>();
@@ -160,33 +159,26 @@ public class BookingService {
         List<Booking> conflicts = bookingRepository.findConflictingBookings(
                 facility, booking.getDate(),
                 booking.getStartTime(), booking.getEndTime(),
-                List.of(BookingStatus.CONFIRMED, BookingStatus.PENDING));
+                List.of(BookingStatus.CONFIRMED));
         if (!conflicts.isEmpty()) {
             throw new RuntimeException(
                     "Time slot " + booking.getStartTime() + " – " + booking.getEndTime()
                             + " on " + booking.getDate() + " is already booked.");
         }
 
-        // 7. Set status: VISITOR bookings always need approval (external orgs must be
-        // vetted);
-        // for internal users, large-venue facility types also require it.
+        // 7. All bookings are immediately confirmed — no approval step required.
         booking.setFacility(facility);
         booking.setUser(user);
-        boolean requiresApproval = user.getRole() == UserRole.VISITOR
-                || facility.getFacilityType().getRequiresApproval();
-        booking.setStatus(requiresApproval ? BookingStatus.PENDING : BookingStatus.CONFIRMED);
+        booking.setStatus(BookingStatus.CONFIRMED);
 
         Booking saved = bookingRepository.save(booking);
 
         // 8. Notify user
-        String statusMsg = requiresApproval
-                ? "Your booking for " + facility.getName() + " on " + booking.getDate() + " is pending admin approval."
-                : "Your booking for " + facility.getName() + " on " + booking.getDate() + " is confirmed!";
         notificationService.sendNotification(
                 user, saved,
-                requiresApproval ? "Booking Pending Approval" : "Booking Confirmed",
-                statusMsg,
-                requiresApproval ? NotificationType.BOOKING_CONFIRMED : NotificationType.BOOKING_CONFIRMED);
+                "Booking Confirmed",
+                "Your booking for " + facility.getName() + " on " + booking.getDate() + " is confirmed!",
+                NotificationType.BOOKING_CONFIRMED);
 
         return saved;
     }
