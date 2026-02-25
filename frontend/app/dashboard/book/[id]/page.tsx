@@ -143,15 +143,15 @@ export default function BookingFormPage({ params }: { params: Promise<{ id: stri
     }
 
     return (
-        <div className="min-h-screen p-6 lg:p-8">
-            <motion.div initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} className="mb-6">
+        <div className="min-h-screen p-4 sm:p-6 lg:p-8">
+            <motion.div initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} className="mb-5 sm:mb-6">
                 <Link href={`/dashboard/facilities/${facility.id}`} className="inline-flex items-center gap-2 text-sm text-white/50 hover:text-white transition-colors">
                     <ArrowLeft size={16} /> Back to {facility.name}
                 </Link>
             </motion.div>
 
             {/* Step indicator */}
-            <motion.div initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-2 mb-8">
+            <motion.div initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-2 mb-6 sm:mb-8">
                 {["Select Slot", "Details", "Confirm"].map((label, i) => {
                     const s = (i + 1) as 1 | 2 | 3;
                     return (
@@ -171,7 +171,7 @@ export default function BookingFormPage({ params }: { params: Promise<{ id: stri
                 })}
             </motion.div>
 
-            <div className="grid lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
                 <div className="lg:col-span-2">
                     {error && (
                         <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/25 text-red-400 text-xs">
@@ -312,8 +312,8 @@ export default function BookingFormPage({ params }: { params: Promise<{ id: stri
                 </div>
 
                 {/* Summary card */}
-                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="lg:col-span-1">
-                    <div className="glass-strong rounded-2xl overflow-hidden sticky top-6">
+                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="lg:col-span-1 order-first lg:order-last">
+                    <div className="glass-strong rounded-2xl overflow-hidden lg:sticky lg:top-6">
                         <div className="relative h-36">
                             <Image src={imgSrc} alt={facility.name} fill className="object-cover" unoptimized />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />

@@ -71,17 +71,17 @@ export default function MyBookingsPage() {
     ];
 
     return (
-        <div className="min-h-screen p-6 lg:p-8">
-            <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
-                <h1 className="text-2xl font-bold text-white">My Bookings</h1>
+        <div className="min-h-screen p-4 sm:p-6 lg:p-8">
+            <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} className="mb-6 sm:mb-8">
+                <h1 className="text-xl sm:text-2xl font-bold text-white">My Bookings</h1>
                 <p className="text-sm text-white/45 mt-0.5">Track and manage all your facility reservations</p>
             </motion.div>
 
             {/* Stats */}
             <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
-                className="grid grid-cols-4 gap-3 mb-6">
+                className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mb-5 sm:mb-6">
                 {stats.map(({ label, count, color }) => (
-                    <div key={label} className="glass-card rounded-2xl p-4 text-center">
+                    <div key={label} className="glass-card rounded-2xl p-3 sm:p-4 text-center">
                         <p className={clsx("text-xl font-bold", color)}>{count}</p>
                         <p className="text-xs text-white/40 mt-0.5">{label}</p>
                     </div>

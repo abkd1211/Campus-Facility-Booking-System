@@ -63,16 +63,16 @@ export default function DashboardHome() {
     const hasFilters = !!(typeId || minCap || onlyWifi || onlyProj || onlyAC || onlyAvail);
 
     return (
-        <div className="min-h-screen p-6 lg:p-8">
+        <div className="min-h-screen p-4 sm:p-6 lg:p-8">
             {/* Header */}
             <motion.div
                 initial={{ opacity: 0, y: -16 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mb-8 flex items-start justify-between gap-4"
+                className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-start justify-between gap-3"
             >
-                <div>
+                <div className="min-w-0">
                     <p className="text-sm text-teal-400 font-medium mb-1">{today}</p>
-                    <h1 className="text-2xl font-bold text-white">
+                    <h1 className="text-xl sm:text-2xl font-bold text-white truncate">
                         {greeting}, {user?.name?.split(" ")[0] ?? "there"}
                     </h1>
                     <p className="text-sm text-white/45 mt-0.5">
@@ -81,7 +81,7 @@ export default function DashboardHome() {
                 </div>
 
                 {/* Quick Book CTA */}
-                <Link href="/dashboard/bookings" className="shrink-0 mt-1">
+                <Link href="/dashboard/bookings" className="shrink-0 sm:mt-1 self-start">
                     <motion.button
                         whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
                         className="flex items-center gap-2 px-4 py-2.5 rounded-2xl text-sm font-semibold text-white
@@ -217,7 +217,7 @@ export default function DashboardHome() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.1 }}
-                    className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5"
+                    className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5"
                 >
                     {facilityList.map((f, i) => (
                         <FacilityCard key={f.id} facility={f} index={i} />

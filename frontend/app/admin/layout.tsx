@@ -23,9 +23,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }
 
     return (
-        <div className="min-h-screen flex admin-mesh-bg">
+        <div className="min-h-screen flex admin-mesh-bg overflow-x-hidden">
             <AdminSidebar />
-            <main className="flex-1 lg:ml-64 min-h-screen">
+            <main className="flex-1 lg:ml-64 min-h-screen pt-16 lg:pt-0">
                 {children}
             </main>
         </div>

@@ -51,38 +51,38 @@ export default function AdminOverview() {
     ];
 
     return (
-        <div className="min-h-screen p-6 lg:p-8">
-            <motion.div initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }} className="mb-8 flex items-start justify-between gap-4">
-                <div>
+        <div className="min-h-screen p-4 sm:p-6 lg:p-8">
+            <motion.div initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }} className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                <div className="min-w-0">
                     <p className="text-xs font-semibold text-amber-400/70 uppercase tracking-widest mb-1">Administrator</p>
-                    <h1 className="text-3xl font-bold text-white mb-1">System <span className="gradient-text-admin">Overview</span></h1>
+                    <h1 className="text-2xl sm:text-3xl font-bold text-white mb-1">System <span className="gradient-text-admin">Overview</span></h1>
                     <p className="text-sm text-white/35">University of Ghana, Legon · Facility Management</p>
                 </div>
                 <button onClick={load} disabled={loading}
-                    className="glass px-3 py-2 rounded-xl text-xs text-white/50 hover:text-white transition-colors flex items-center gap-1.5 mt-1">
+                    className="glass px-3 py-2 rounded-xl text-xs text-white/50 hover:text-white transition-colors flex items-center gap-1.5 self-start sm:mt-1">
                     <RefreshCw size={13} className={loading ? "animate-spin" : ""} /> Refresh
                 </button>
             </motion.div>
 
             {/* Stat cards */}
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-                className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
                 {stats.map((s, i) => (
                     <motion.div key={s.label} initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 + i * 0.06 }}>
                         <Link href={s.href}>
-                            <div className={clsx("glass-card rounded-2xl p-5 cursor-pointer group border", s.border)}>
-                                <div className={clsx("w-10 h-10 rounded-xl flex items-center justify-center mb-4", s.bg)}>
-                                    <s.icon size={19} className={s.color} />
+                            <div className={clsx("glass-card rounded-2xl p-3 sm:p-5 cursor-pointer group border", s.border)}>
+                                <div className={clsx("w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center mb-2 sm:mb-4", s.bg)}>
+                                    <s.icon size={16} className={s.color} />
                                 </div>
-                                <p className={clsx("text-2xl font-bold mb-0.5", s.color)}>{s.value}</p>
-                                <p className="text-xs text-white/50 font-medium">{s.label}</p>
+                                <p className={clsx("text-xl sm:text-2xl font-bold mb-0.5", s.color)}>{s.value}</p>
+                                <p className="text-[10px] sm:text-xs text-white/50 font-medium">{s.label}</p>
                             </div>
                         </Link>
                     </motion.div>
                 ))}
             </motion.div>
 
-            <div className="grid lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
                 {/* Recent bookings quick-view */}
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="lg:col-span-2">
                     <div className="glass-card rounded-2xl overflow-hidden">
